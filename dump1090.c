@@ -1,4 +1,4 @@
-/* Mode1090, a Mode S messages decoder for RTLSDR devices.
+/* M/de1090, a Mode S messages decoder for RTLSDR devices.
  * Copyright (C) 2017 by Jiang Wei <jiangwei0402@gmail.com>
  * Copyright (C) 2012 by Salvatore Sanfilippo <antirez@gmail.com>
  *
@@ -54,7 +54,7 @@
 #define MODES_ASYNC_BUF_NUMBER     12
 #define MODES_DATA_LEN             (16*16384)   /* 256k */
 #define MODES_AUTO_GAIN            -100         /* Use automatic gain. */
-#define MODES_MAX_GAIN             999999       /* Use max available gain. */
+#define MODES_MAX_GAIN             70       /* Use max available gain. */
 
 #define MODES_PREAMBLE_US 8       /* microseconds */
 #define MODES_LONG_MSG_BITS 112
@@ -263,9 +263,9 @@ static long long mstime(void) {
 /* =============================== Initialization =========================== */
 
 void modesInitConfig(void) {
-	Modes.gain = MODES_MAX_GAIN;
+	Modes.gain = MODES_AUTO_GAIN;
 	Modes.dev_index = 0;
-	Modes.enable_agc = 0;
+	Modes.enable_agc = 1;
 	Modes.freq = MODES_DEFAULT_FREQ;
 	Modes.filename = NULL;
 	Modes.fix_errors = 1;
@@ -397,7 +397,17 @@ void modesInitPLUTOSDR(void) {
 	if (!Modes.rxbuf) {
 		perror("Could not create RX buffer");
 	}
-	
+
+	if(Modes.gain==MODES_AUTO_GAIN){
+		iio_channel_attr_write(phy_chn,"gain_control_mode","slow_attack");
+	}else{
+		if(Modes.gain>MODES_MAX_GAIN)
+			Modes.gain=MODES_MAX_GAIN;
+		iio_channel_attr_write(phy_chn,"gain_control_mode","manual");
+		iio_channel_attr_write_longlong(phy_chn, "hardwaregain", Modes.gain);
+	}
+
+
 }
 
 /* We use a thread reading data in background, while the main thread
@@ -408,7 +418,7 @@ void modesInitPLUTOSDR(void) {
  * A Mutex is used to avoid races with the decoding thread. */
 void plutosdrCallback(unsigned char *buf, uint32_t len){
 	pthread_mutex_lock(&Modes.data_mutex);
-	for (int i = 0; i < len; i++){
+	for (uint32_t i = 0; i < len; i++){
 		buf[i]^= (uint8_t)0x80;
 	}
 	if (len > MODES_DATA_LEN) len = MODES_DATA_LEN;
@@ -479,12 +489,10 @@ void *readerThreadEntryPoint(void *arg) {
 		unsigned char cb_buf[MODES_DATA_LEN];
 
 		while(!Modes.stop){
-			ssize_t nbytes_rx;
 			void *p_dat, *p_end;
 			ptrdiff_t p_inc;
 			int j=0;
-			nbytes_rx = iio_buffer_refill(Modes.rxbuf);
-
+			iio_buffer_refill(Modes.rxbuf);
 			p_inc = iio_buffer_step(Modes.rxbuf);
 			p_end = iio_buffer_end(Modes.rxbuf);
 			p_dat = iio_buffer_first(Modes.rxbuf, Modes.rx0_i);
@@ -2504,9 +2512,9 @@ int getTermRows() {
 
 void showHelp(void) {
 	printf(
-		//	"--device-index <index>   Select PlutoSDR device (default: 0).\n"
-			"--gain <db>              Set gain (default: max gain. Use -100 for auto-gain).\n"
-			"--enable-agc             Enable the Automatic Gain Control (default: off).\n"
+			//	"--device-index <index>   Select PlutoSDR device (default: 0).\n"
+			"--gain <db>              Set gain (default: auto-gain. Use -100 for auto-gain).\n"
+			"--enable-agc             Enable the Automatic Gain Control (default: on).\n"
 			"--freq <hz>              Set frequency (default: 1090 Mhz).\n"
 			"--ifile <filename>       Read data from file (use '-' for stdin).\n"
 			"--interactive            Interactive mode refreshing data on screen.\n"
@@ -2574,10 +2582,10 @@ int main(int argc, char **argv) {
 			Modes.dev_index = atoi(argv[++j]);
 		}
 		else if (!strcmp(argv[j], "--gain") && more) {
-			Modes.gain = atof(argv[++j]) * 10; /* Gain is in tens of DBs */
+			Modes.gain = atof(argv[++j]); /* Gain is in tens of DBs */
 		}
 		else if (!strcmp(argv[j], "--enable-agc")) {
-			Modes.enable_agc++;
+			Modes.enable_agc=atoi(argv[++j]);
 		}
 		else if (!strcmp(argv[j], "--freq") && more) {
 			Modes.freq = strtoll(argv[++j], NULL, 10);
@@ -2753,5 +2761,6 @@ int main(int argc, char **argv) {
 
 	return 0;
 }
+
 
 
