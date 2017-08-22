@@ -341,9 +341,10 @@ void modesInitPLUTOSDR(void) {
 	int device_count;
 
 	printf("* Acquiring IIO context\n");
-	//Modes.ctx = iio_create_default_context();
-	Modes.ctx = iio_create_network_context("pluto.local");
-
+	Modes.ctx = iio_create_default_context();
+	if(Modes.ctx == NULL){
+		Modes.ctx = iio_create_network_context("pluto.local");
+	}
 	device_count = iio_context_get_devices_count(Modes.ctx);
 	if (!device_count) {
 		fprintf(stderr, "No supported PLUTOSDR devices found.\n");
@@ -418,7 +419,8 @@ void modesInitPLUTOSDR(void) {
  * A Mutex is used to avoid races with the decoding thread. */
 void plutosdrCallback(unsigned char *buf, uint32_t len){
 	pthread_mutex_lock(&Modes.data_mutex);
-	for (uint32_t i = 0; i < len; i++){
+	uint32_t i;
+	for (i = 0; i < len; i++){
 		buf[i]^= (uint8_t)0x80;
 	}
 	if (len > MODES_DATA_LEN) len = MODES_DATA_LEN;
