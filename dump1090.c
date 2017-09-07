@@ -46,6 +46,7 @@
 #include <iio.h>
 #include <ad9361.h>
 #include "anet.h"
+#include "incbin.h"
 
 #define MODES_DEFAULT_RATE         2000000
 #define MODES_DEFAULT_FREQ         1090000000
@@ -93,7 +94,7 @@
 #define MODES_NET_SNDBUF_SIZE (1024*64)
 
 #define MODES_NOTUSED(V) ((void) V)
-
+INCBIN(html,"gmap.html");
 /* Structure used to describe a networking client. */
 struct client {
 	int fd;         /* File descriptor. */
@@ -2325,27 +2326,21 @@ int handleHTTPRequest(struct client *c) {
 		ctype = MODES_CONTENT_TYPE_JSON;
 	}
 	else {
-		struct stat sbuf;
-		int fd = -1;
 
-		if (stat("gmap.html", &sbuf) != -1 &&
-				(fd = open("gmap.html", O_RDONLY)) != -1)
-		{
-			content = malloc(sbuf.st_size);
-			if (read(fd, content, sbuf.st_size) == -1) {
-				snprintf(content, sbuf.st_size, "Error reading from file: %s",
-						strerror(errno));
-			}
-			clen = sbuf.st_size;
-		}
-		else {
+		if(ghtmlSize!=0){
+
+			clen=ghtmlSize;
+			content = malloc(ghtmlSize);
+			memcpy(content,ghtmlData,ghtmlSize);
+
+		}else{
+
 			char buf[128];
-
 			clen = snprintf(buf, sizeof(buf), "Error opening HTML file: %s",
 					strerror(errno));
 			content = strdup(buf);
+
 		}
-		if (fd != -1) close(fd);
 		ctype = MODES_CONTENT_TYPE_HTML;
 	}
 
@@ -2572,7 +2567,6 @@ void backgroundTasks(void) {
 
 int main(int argc, char **argv) {
 	int j;
-
 	/* Set sane defaults. */
 	modesInitConfig();
 
