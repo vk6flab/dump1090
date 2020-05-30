@@ -94,7 +94,7 @@
 #define MODES_NET_SNDBUF_SIZE (1024*64)
 
 #define MODES_NOTUSED(V) ((void) V)
-INCBIN(html,"gmap.html");
+INCBIN(html,"map.html");
 /* Structure used to describe a networking client. */
 struct client {
 	int fd;         /* File descriptor. */
@@ -2319,7 +2319,7 @@ int handleHTTPRequest(struct client *c) {
 	}
 
 	/* Select the content to send, we have just two so far:
-	 * "/" -> Our google map application.
+	 * "/" -> Our map application.
 	 * "/data.json" -> Our ajax request to update planes. */
 	if (strstr(url, "/data.json")) {
 		content = aircraftsToJson(&clen);

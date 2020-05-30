@@ -2,6 +2,7 @@ Dump1090 README
 ===
 
 Dump 1090 is a Mode S decoder specifically designed for RTLSDR devices.
+This version supports the ADALM Pluto and Open Street Map.
 
 The main features are:
 
@@ -9,7 +10,7 @@ The main features are:
   improved range compared to other popular decoders.
 * Network support: TCP30003 stream (MSG5...), Raw packets, HTTP.
 * Embedded HTTP server that displays the currently detected aircrafts on
-  Google Map.
+  Open Street Map.
 * Single bit errors correction using the 24 bit CRC.
 * Ability to decode DF11, DF17 messages.
 * Ability to decode DF formats like DF0, DF4, DF5, DF16, DF20 and DF21
