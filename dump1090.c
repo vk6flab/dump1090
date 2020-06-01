@@ -1388,7 +1388,7 @@ void detectModeS(uint16_t *m, uint32_t mlen) {
 	 * 3.5 - 4   usec: third impulse.
 	 * 4.5 - 5   usec: last impulse.
 	 *
-	 * Since we are sampling at 2 Mhz every sample in our magnitude vector
+	 * Since we are sampling at 2 MHz every sample in our magnitude vector
 	 * is 0.5 usec, so the preamble will look like this, assuming there is
 	 * an impulse at offset 0 in the array:
 	 *
@@ -2512,7 +2512,7 @@ void showHelp(void) {
 			//	"--device-index <index>   Select PlutoSDR device (default: 0).\n"
 			"--gain <db>              Set gain (default: auto-gain. Use -100 for auto-gain).\n"
 			"--enable-agc             Enable the Automatic Gain Control (default: on).\n"
-			"--freq <hz>              Set frequency (default: 1090 Mhz).\n"
+			"--freq <Hz>              Set frequency (default: 1090 MHz).\n"
 			"--ifile <filename>       Read data from file (use '-' for stdin).\n"
 			"--interactive            Interactive mode refreshing data on screen.\n"
 			"--interactive-rows <num> Max number of rows in interactive mode (default: 15).\n"

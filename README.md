@@ -15,7 +15,7 @@ The main features are:
 * Robust decoding of weak messages, with dump1090 many users observed
   improved range compared to other popular decoders.
 * Network support: TCP 30003 stream (MSG5...), Raw packets, HTTP.
-* Embedded port HTTP server that displays the currently detected aircraft 
+* Embedded HTTP server that displays the currently detected aircraft 
   on Open Street Map. (port 8080)
 * Single bit errors correction using the 24 bit CRC.
 * Ability to decode DF11, DF17 messages.
@@ -141,7 +141,7 @@ it without arguments at all is the best thing to do.
 # ./dump1090.bin --help
 --gain <db>              Set gain (default: auto-gain. Use -100 for auto-gain).
 --enable-agc             Enable the Automatic Gain Control (default: on).
---freq <hz>              Set frequency (default: 1090 Mhz).
+--freq <Hz>              Set frequency (default: 1090 MHz).
 --ifile <filename>       Read data from file (use '-' for stdin).
 --interactive            Interactive mode refreshing data on screen.
 --interactive-rows <num> Max number of rows in interactive mode (default: 15).
@@ -232,10 +232,10 @@ broadcast to clients listening to port 30002.
 In general everything received from port 30001 is handled exactly as the
 normal traffic from the receiver or from file when `--ifile` is used.
 
-It is possible to use Dump1090 just as an hub using `--ifile` with /dev/zero
+It is possible to use Dump1090 just as an hub using `--ifile` with `/dev/zero`
 as argument as in the following example:
 
-    ./dump1090 --net-only
+    ./dump1090 --net-only --ifile /dev/zero
 
 Or alternatively to see what's happening on the screen:
 
@@ -271,7 +271,7 @@ You can change the port number with `--net-http-port`
 Antenna
 ---
 
-Mode S messages are transmitted in the 1090 MHz frequency. If you have a decent
+Mode S messages are transmitted at 1090 MHz with 50 kHz bandwidth. If you have a decent
 antenna you'll be able to pick up signals from aircraft pretty far from your
 position, especially if you are outdoor and in a position with a good sky view.
 
@@ -284,9 +284,9 @@ This trivial antenna was able to pick up signals of aircraft 200+ km away.
 If you are interested in a more serious antenna check the following
 resources:
 
-* http://gnuradio.org/data/grcon11/06-foster-adsb.pdf
+* [https://www.gnuradio.org/redmine/attachments/download/246/06-foster-adsb.pdf](https://web.archive.org/web/20140810055152/https://www.gnuradio.org/redmine/attachments/download/246/06-foster-adsb.pdf)
 * http://www.lll.lu/~edward/edward/adsb/antenna/ADSBantenna.html
-* http://modesbeast.com/pix/adsb-ant-drawing.gif
+* [http://modesbeast.com/pix/adsb-ant-drawing.gif](https://web.archive.org/web/20130926203634/http://modesbeast.com/pix/adsb-ant-drawing.gif)
 
 
 Aggressive mode
@@ -325,7 +325,7 @@ before the first peak to provide some context.
 To enable debug mode and check what combinations of packets you can
 log, use `dump1090 --help` to obtain a list of available debug flags.
 
-Debug mode includes an optional Javascript output that is used to visualise
+Debug mode includes an optional JavaScript output that is used to visualise
 packets using a web browser, you can use the file debug.html under the
 'tools' directory to load the generated 'frames.js' file.
 
@@ -338,15 +338,15 @@ diligent programmer with a Mode S specification it should be trivial to
 understand how it works.
 
 The algorithms used were obtained by looking at many messages as displayed using
-a throwaway SDL program, and trying to model the algorithm
-based on how the messages look graphically.
+a throwaway SDL program, and trying to model the algorithm based on how the
+messages look graphically.
 
 
 How to test the program?
 ---
 
 If you have a PlutoSDR device and you happen to be in an area where there
-are aircraft flying over your head, just run the program and check for signals.
+are aircraft flying overhead, just run the program and check for signals.
 
 However if you don't have a PlutoSDR device, or if in your area the presence
 of aircraft is very limited, you may want to try the sample file distributed
@@ -380,17 +380,17 @@ released under the BSD three clause license.
 
 Commits have been made by:
 
-Alan McCullagh <tyrower@kiffduskiff.com>\
-Frederik De Bleser <frederik@debleser.be>\
-Jon Williams <jonathan.williams@gmail.com>\
-Karel Heyse <karel.heyse@gmail.com>\
-Kemal Hadimli <kemal@vnil.la>\
-Michael Weber <michael@xmw.de>\
-Onno Benschop <cq@vk6flab.com>\
-Skip Tavakkolian <skip.tavakkolian@gmail.com>\
-Steve Markgraf <steve@steve-m.de>\
-Steven Kreuzer <skreuzer@FreeBSD.org>\
-Yuval Adam <_@yuv.al>\
-Yuval Adam <yuval@y3xz.com>\
-Salvatore Sanfilippo <antirez@gmail.com>\
-jocover <jiangwei0402@gmail.com>
+* Alan McCullagh <tyrower@kiffduskiff.com>
+* Frederik De Bleser <frederik@debleser.be>
+* Jon Williams <jonathan.williams@gmail.com>
+* Karel Heyse <karel.heyse@gmail.com>
+* Kemal Hadimli <kemal@vnil.la>
+* Michael Weber <michael@xmw.de>
+* Onno Benschop <cq@vk6flab.com>
+* Skip Tavakkolian <skip.tavakkolian@gmail.com>
+* Steve Markgraf <steve@steve-m.de>
+* Steven Kreuzer <skreuzer@FreeBSD.org>
+* Yuval Adam <_@yuv.al>
+* Yuval Adam <yuval@y3xz.com>
+* Salvatore Sanfilippo <antirez@gmail.com>
+* jocover <jiangwei0402@gmail.com>
