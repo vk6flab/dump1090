@@ -24,18 +24,26 @@ ENV HOST=arm-linux-gnueabihf
 # Prove that it works
 RUN arm-linux-gnueabihf-gcc --version
 
-# Update this section to compile other source code
-FROM pluto-compiler AS pluto-dump1090
+
+# Check this section to ensure that your firmware version matches
+FROM pluto-compiler AS pluto-staging
 
 RUN mkdir /plutosdr
 WORKDIR /plutosdr
 
-# Make sure that the version number for your firmware matches this sysroot URL.
+# See the Analog Pluto firmware releases for details and links:
+# https://github.com/analogdevicesinc/plutosdr-fw/releases/
+
+# Make sure that the version number for your firmware matches the sysroot URL below.
 RUN wget -q https://github.com/analogdevicesinc/plutosdr-fw/releases/download/v0.31/sysroot-v0.31.tar.gz
 RUN tar -zxf sysroot-v0.31.tar.gz
 
 # Add the compiler bits to our sysroot
 RUN tar -xf /usr/local/bin/gcc-linaro-7.2.1-2017.11-i686_arm-linux-gnueabihf.tar.xz  --directory staging
+
+
+# Actually get the source and cross-compile it
+FROM pluto-staging AS pluto-crosscompile
 
 # Get the source we're actually building
 RUN git clone https://github.com/vk6flab/dump1090.git
